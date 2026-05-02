@@ -1,7 +1,5 @@
 import requests
-
-# Base URL
-BASE_URL = "https://jsonplaceholder.typicode.com"
+from conftest import BASE_URL, REQRES_URL, API_KEY
 
 
 # TC-01: GET single post - should return 200 with correct data
@@ -47,3 +45,42 @@ def test_should_return_404_when_post_does_not_exist():
     response = requests.get(f"{BASE_URL}/posts/9999")
 
     assert response.status_code == 404
+
+# TC-05: POST valid login - should return 200 with token
+def test_should_return_token_when_credentials_are_valid():
+    payload = {
+        "email": "eve.holt@reqres.in",
+        "password": "cityslicka"
+    }
+    headers = {
+        "x-api-key": API_KEY
+    }
+
+    response = requests.post(
+        f"{REQRES_URL}/api/login",
+        json=payload,
+        headers=headers
+    )
+
+    assert response.status_code == 200
+    assert response.json()["token"] is not None
+    assert response.json()["token"] != ""
+
+
+# TC-06: POST invalid login - should return 400
+def test_should_return_400_when_credentials_are_invalid():
+    payload = {
+        "email": "wrong@email.com",
+        "password": "wrongpassword"
+    }
+    headers = {
+        "x-api-key": API_KEY
+    }
+
+    response = requests.post(
+        f"{REQRES_URL}/api/login",
+        json=payload,
+        headers=headers
+    )
+
+    assert response.status_code == 400
