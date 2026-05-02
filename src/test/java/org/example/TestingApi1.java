@@ -1,8 +1,7 @@
 package org.example;
 
-import java.util.ArrayList;
 import static io.restassured.RestAssured.*;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 
 public class TestingApi1 {
     final static String url="https://demo.guru99.com/V4/sinkministatement.php?CUSTOMER_ID=68195&PASSWORD=1234!&Account_No=1";
