@@ -1,0 +1,46 @@
+name: Python API Tests
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'python/**'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'python/**'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run pytest with requests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        working-directory: ./python/python_API_testing
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest requests pytest-html pytest-metadata
+
+      - name: Run tests
+        working-directory: ./python/python_API_testing
+        run: pytest -v --html=reports/python_report.html --self-contained-html
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-test-report
+          path: python/python_API_testing/reports/
+
+      - name: Display test results
+        if: always()
+        run: echo "Python tests completed with status ${{ job.status }}"
